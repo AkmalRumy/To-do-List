@@ -1,20 +1,20 @@
-
 package pdsa.cw;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 public class PDSACW {
-
+//main class
     public static void main(String[] args) {
         ToDoList toDoList = new ToDoList();
-        toDoList.showMenu();
+        toDoList.showMenu();//this is the code which call the menu  
     }
     
 }
 
-class Task implements Comparable<Task> {
+class Task implements Comparable<Task> {// comparable this is used for the perpose of sorting the data
     private String description;
     private boolean isCompleted;
     private int priority;
@@ -24,83 +24,101 @@ class Task implements Comparable<Task> {
     private boolean endNotified;
     private String notes;
 
-    public Task(String description) {
+    public Task(String description) {// this Constructor used to set  initial values 
         this.description = description;
         this.isCompleted = false;
-        this.priority = Integer.MAX_VALUE; // Default priority, lower values are higher priority
+        this.priority = Integer.MAX_VALUE; // default priority, lower values are higher priority
         this.startTime = null;
         this.endTime = null;
         this.startNotified = false;
         this.endNotified = false;
         this.notes = "";
     }
-
+  //these are getters
     public String getDescription() {
+        //gives the descripition when ever we need
         return description;
     }
 
     public boolean isCompleted() {
+        //used for check where the task is completed
         return isCompleted;
     }
 
     public int getPriority() {
+        //the see the tasks priority level
         return priority;
     }
-
+    public LocalDateTime getStartTime() {
+        // to get the start time of the task
+        return startTime;
+    }
+     public LocalDateTime getEndTime() {
+        //get the end time of a task
+        return endTime;
+    }
+     public boolean isStartNotified() {
+        //to check where the start notification is send
+        return startNotified;
+    }
+     public String getNotes() {
+        //used to get the notes for the task
+        return notes;
+    }
+     public boolean isEndNotified() {
+        //to check where the end notification is send
+        return endNotified;
+    }
+     
+     
+     //these are the setters
+     
     public void setPriority(int priority) {
+        // to set priority for the tasks
         this.priority = priority;
     }
 
     public void markCompleted() {
+        // to mark the task completed
         isCompleted = true;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
     public void setStartTime(LocalDateTime startTime) {
+        //when we need to set start time 
         this.startTime = startTime;
     }
 
     public void setEndTime(LocalDateTime endTime) {
+        // to set the end time for a task
         this.endTime = endTime;
     }
 
-    public boolean isStartNotified() {
-        return startNotified;
-    }
-
     public void setStartNotified(boolean startNotified) {
+        // to see whether a start noti has been sended
         this.startNotified = startNotified;
     }
 
-    public boolean isEndNotified() {
-        return endNotified;
-    }
-
     public void setEndNotified(boolean endNotified) {
+        // to see whether a end noti has been sended
         this.endNotified = endNotified;
     }
 
-    public String getNotes() {
-        return notes;
-    }
-
     public void addNotes(String notes) {
+        //to add notes for the task
         this.notes = notes;
     }
-
+    
+    
+     //returns string values to the task
     @Override
     public String toString() {
-        String due = (startTime != null && endTime != null) ? " [Due: " + startTime + " to " + endTime + "]" : "";
-        return description + (isCompleted ? " (Completed)" : "") + " [Priority: " + priority + "]" + due + " [Notes: " + notes + "]";
-    }
+    String due = (startTime != null && endTime != null) ? " [Due: " + startTime + " to " + endTime + "]" : "";
+    String priorityStr = (priority != Integer.MAX_VALUE) ? " [Priority: " + priority + "]" : "";
+    String notesStr = (!notes.isEmpty()) ? " [Notes: " + notes + "]" : "";
+    return description + (isCompleted ? " (Completed)" : "") + priorityStr + due + notesStr;
+}
 
+  // compares tasks based on priority sorting
     @Override
     public int compareTo(Task other) {
         return Integer.compare(this.priority, other.priority);
@@ -108,8 +126,9 @@ class Task implements Comparable<Task> {
 }
 
 class Node {
-    Task task;
-    Node next;
+    //Node class where nodes are created
+    Task task;//task 
+    Node next;//location for the next node
 
     public Node(Task task) {
         this.task = task;
@@ -118,47 +137,49 @@ class Node {
 }
 
 class SinglyLinkedList {
-     Node head;
-     Node tail;
+     Node head;// represtents the first node of the list 
+     Node tail;// represtents the last node of the list 
 
     public SinglyLinkedList() {
         head = null;
         tail = null;
     }
-
+//Task task = new Task();
     public void add(Task task) {
         Node newNode = new Node(task);
         if (head == null) {
             head = newNode;
             tail = newNode;
         } else {
-            tail.next = newNode;
-            tail = newNode;
+            tail.next = newNode;//making the new node as the last one
+            tail = newNode;//make the new tail of the list
         }
     }
 
     public void remove(int index) {
-        if (head == null || index < 0) {
+        //to remove task
+        if (head == null || index < 0) {// checking if the list is empty or index is lessthan 0
             System.out.println("Invalid task index.");
             return;
         }
-
-        if (index == 0) {
-            head = head.next;
-            if (head == null) {
+//to remove the first task
+        if (index == 0) {//checking here te if tyhe user want to remove the first node
+            head = head.next;//updates the head to point to the next node in the list
+           
+            if (head == null) {// updating the tail also null if there is only one node
                 tail = null;
             }
             return;
         }
-
+// to remove a selected index
         Node current = head;
         Node previous = null;
         int currentIndex = 0;
 
         while (current != null && currentIndex < index) {
-            previous = current;
-            current = current.next;
-            currentIndex++;
+            previous = current;// before the current node
+            current = current.next;//current node
+            currentIndex++;//to tack the position of the list
         }
 
         if (current != null) {
@@ -166,12 +187,13 @@ class SinglyLinkedList {
             if (current.next == null) {
                 tail = previous;
             }
-        } else {
+        } else {//if the index  is large than the size
             System.out.println("Invalid task index.");
         }
     }
 
     public Task get(int index) {
+        //get tasks based on the index like search
         Node current = head;
         int currentIndex = 0;
 
@@ -184,6 +206,7 @@ class SinglyLinkedList {
     }
 
     public int size() {
+        // to get the number of task in the list
         int size = 0;
         Node current = head;
 
@@ -196,6 +219,7 @@ class SinglyLinkedList {
     }
 
     public void printList() {
+        // to print the tasks
         Node current = head;
         int index = 0;
 
@@ -205,30 +229,78 @@ class SinglyLinkedList {
             index++;
         }
     }
+      // Method to sort the list based on priority
+    public void sort() {
+    if (head == null || head.next == null) {
+        return;
+    }
+
+    Node sorted = null;
+
+    while (head != null) {
+        Node current = head;
+        head = head.next;
+
+        if (sorted == null || current.task.getPriority() < sorted.task.getPriority()) {
+            current.next = sorted;
+            sorted = current;
+        } else {
+            Node temp = sorted;
+            while (temp.next != null && temp.next.task.getPriority() <= current.task.getPriority()) {
+                temp = temp.next;
+            }
+            current.next = temp.next;
+            temp.next = current;
+        }
+    }
+
+    head = sorted;
+
+    // Reset tail
+    Node temp = head;
+    while (temp.next != null) {
+        temp = temp.next;
+    }
+    tail = temp;
 }
 
+}
+
+
 class ToDoList {
-    private SinglyLinkedList tasks;
-    private SinglyLinkedList missedTasks;
+    private SinglyLinkedList tasks;//here is a linkedlist for tasks
+    private SinglyLinkedList missedTasks;//here is a linked list for missed task
 
     public ToDoList() {
-        tasks = new SinglyLinkedList();
+        tasks = new SinglyLinkedList();//empty object creation
         missedTasks = new SinglyLinkedList();
-        startNotificationThread();
+        startNotificationThread();//this method is called to begin a background threading which notify the strt and end time of a task
     }
 
     public void addTask(String description) {
-        tasks.add(new Task(description));
+        tasks.add(new Task(description));//calling add method which is in the singlylinked list class
+        System.out.println("Task Added Successfully");
     }
 
     public void removeTask(int index) {
-        tasks.remove(index);
+        tasks.remove(index);//calling the remove method in singlylinked list
+        System.out.println("Task Removed Successfully");
     }
 
     public void viewTasks() {
-        System.out.println("To-Do List:");
-        tasks.printList();
+    System.out.println("To-Do List:");
+    Node current = tasks.head;
+    int index = 0;
+
+    while (current != null) {
+        if (!current.task.isCompleted()) {
+            System.out.println((index + 1) + ". " + current.task);
+        }
+        current = current.next;
+        index++;
     }
+}
+
 
     public void viewCompletedTasks() {
         System.out.println("Completed Tasks:");
@@ -237,7 +309,7 @@ class ToDoList {
 
         while (current != null) {
             if (current.task.isCompleted()) {
-                System.out.println((index + 1) + ". " + current.task);
+                System.out.println((index + 1) + ". " + current.task);//index numbers
             }
             current = current.next;
             index++;
@@ -248,6 +320,7 @@ class ToDoList {
         Task task = tasks.get(index);
         if (task != null) {
             task.markCompleted();
+            System.out.println("Task Mark As Completed Successfully");
         } else {
             System.out.println("Invalid task index.");
         }
@@ -257,6 +330,9 @@ class ToDoList {
         Task task = tasks.get(index);
         if (task != null) {
             task.setPriority(priority);
+            tasks.sort();
+            System.out.println("Task Prioritized Successfully");
+            // Sort the tasks after setting a priority
         } else {
             System.out.println("Invalid task index.");
         }
@@ -264,11 +340,21 @@ class ToDoList {
 
     public void removePriority(int index) {
         Task task = tasks.get(index);
-        if (task != null) {
-            task.setPriority(Integer.MAX_VALUE);
-        } else {
-            System.out.println("Invalid task index.");
-        }
+    if (task != null) {
+        task.setPriority(Integer.MAX_VALUE); // Reset to default priority
+        
+        // Temporarily remove the task from the list
+        tasks.remove(index);
+        
+        // Re-add the task to move it to the end
+        tasks.add(task);
+        
+        // Sort the list again to ensure it stays in the correct order
+        tasks.sort(); 
+        System.out.println("Remove Task Prioriti Successfully");
+    } else {
+        System.out.println("Invalid task index.");
+    }
     }
 
     public void setDue(int index, LocalDateTime startTime, LocalDateTime endTime) {
@@ -335,6 +421,7 @@ class ToDoList {
         Task task = tasks.get(index);
         if (task != null) {
             task.addNotes(notes);
+            System.out.println("Note Added Successfully");
         } else {
             System.out.println("Invalid task index.");
         }
@@ -361,47 +448,47 @@ class ToDoList {
         int choice;
         try {
             choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine(); // gets the index as input
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a number.");
-            scanner.nextLine(); // Consume invalid input
+            scanner.nextLine(); // gets the index if there is any error
             continue;
         }
 
         switch (choice) {
-            case 1:
+            case 1://for add task takes input
                 System.out.print("Enter task description: ");
                 String description = scanner.nextLine();
                 addTask(description);
                 break;
-            case 2:
+            case 2://
                 System.out.print("Enter task index to remove: ");
-                int removeIndex = scanner.nextInt() - 1;
-                scanner.nextLine(); // Consume newline
-                removeTask(removeIndex);
+                int removeIndex = scanner.nextInt() - 1;//gets intput and the nsame time reduse 1 from the input
+                scanner.nextLine(); //
+                removeTask(removeIndex);//calls the remove task and gives the index to remove
                 break;
             case 3:
-                viewTasks();
+                viewTasks();// calling the view method
                 break;
             case 4:
                 System.out.print("Enter task index to mark as completed: ");
-                int completeIndex = scanner.nextInt() - 1;
-                scanner.nextLine(); // Consume newline
-                markTaskCompleted(completeIndex);
+                int completeIndex = scanner.nextInt() - 1;//takes input and reduse one index
+                scanner.nextLine(); 
+                markTaskCompleted(completeIndex);//calls the mark completed tasks and passes the parameter 
                 break;
             case 5:
                 System.out.print("Enter task index to set priority: ");
-                int priorityIndex = scanner.nextInt() - 1;
+                int priorityIndex = scanner.nextInt() - 1;//gets the task which should be priorities and reduses one digit
                 System.out.print("Enter priority (lower value means higher priority): ");
-                int priority = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-                setPriority(priorityIndex, priority);
+                int priority = scanner.nextInt();//gets the pririty number
+                scanner.nextLine();
+                setPriority(priorityIndex, priority);//pass the both index to set priority
                 break;
             case 6:
                 System.out.print("Enter task index to remove priority: ");
                 int removePriorityIndex = scanner.nextInt() - 1;
-                scanner.nextLine(); // Consume newline
-                removePriority(removePriorityIndex);
+                scanner.nextLine(); 
+                removePriority(removePriorityIndex);//calls the remove priority method and pass the index which priority must be removed
                 break;
             case 7:
                 System.out.print("Enter task index to set due time: ");
@@ -432,10 +519,10 @@ class ToDoList {
                 viewMissedTasks();
                 break;
             case 11:
-                System.out.println("Exiting...");
+                System.out.println("Exiting...");// these h=is for exting
                 return;
             default:
-                System.out.println("Invalid option. Please try again.");
+                System.out.println("Invalid option. Please try again.");// is we enter any other than the need index 
                 break;
         }
     }
@@ -466,7 +553,7 @@ class ToDoList {
 }
     public void viewMissedTasks() {
     System.out.println("Missed Tasks:");
-    missedTasks.printList();
+    missedTasks.printList();//calling print method in singlylist
 }
 
 
